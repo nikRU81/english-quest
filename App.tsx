@@ -1336,7 +1336,7 @@ const App: React.FC = () => {
                     ? option.toLowerCase() === currentWord.en.toLowerCase()
                     : currentWord.ru.split(',').map(s => s.trim().toLowerCase()).includes(option.toLowerCase());
 
-                  let btnClass = "bg-slate-900/80 border-slate-600 sm:hover:border-emerald-500 sm:hover:bg-emerald-900/10 text-white";
+                  let btnClass = "bg-slate-900/80 border-slate-600 text-white";
 
                   if (gameState.isCorrect !== null) {
                     if (isThisCorrectAnswer) {
@@ -1351,11 +1351,14 @@ const App: React.FC = () => {
                   return (
                     <button
                       key={`${gameState.currentWordIndex}-${idx}`}
-                      onClick={() => { sounds.playClick(); handleCheckAnswer(undefined, option); }}
+                      onClick={(e) => {
+                        (e.target as HTMLButtonElement).blur();
+                        sounds.playClick();
+                        handleCheckAnswer(undefined, option);
+                      }}
                       disabled={gameState.isCorrect !== null}
-                      className={`choice-btn w-full p-3 sm:p-4 rounded-xl border-2 text-base sm:text-lg font-medium transition-all ${btnClass} ${
-                        gameState.isCorrect === null ? 'sm:hover:scale-[1.02] active:scale-95' : ''
-                      }`}
+                      className={`w-full p-3 sm:p-4 rounded-xl border-2 text-base sm:text-lg font-medium transition-colors outline-none ${btnClass}`}
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
                     >
                       {option}
                     </button>
