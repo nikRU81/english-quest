@@ -1,6 +1,14 @@
-
 class SoundService {
   private ctx: AudioContext | null = null;
+  private _enabled: boolean = true;
+
+  get enabled(): boolean {
+    return this._enabled;
+  }
+
+  setEnabled(value: boolean) {
+    this._enabled = value;
+  }
 
   private initCtx() {
     if (!this.ctx) {
@@ -12,6 +20,8 @@ class SoundService {
   }
 
   private createOscillator(freq: number, type: OscillatorType, duration: number, volume: number) {
+    if (!this._enabled) return;
+
     this.initCtx();
     const osc = this.ctx!.createOscillator();
     const gain = this.ctx!.createGain();
@@ -30,10 +40,12 @@ class SoundService {
   }
 
   playClick() {
+    if (!this._enabled) return;
     this.createOscillator(600, 'sine', 0.1, 0.1);
   }
 
   playCorrect() {
+    if (!this._enabled) return;
     this.initCtx();
     const now = this.ctx!.currentTime;
     const freqs = [440, 554.37, 659.25, 880]; // A major arpeggio
@@ -53,18 +65,36 @@ class SoundService {
   }
 
   playIncorrect() {
+    if (!this._enabled) return;
     this.createOscillator(150, 'square', 0.3, 0.05);
     // Add a second slightly detuned oscillator for a "buzz" effect
     setTimeout(() => this.createOscillator(145, 'square', 0.3, 0.05), 10);
   }
 
   playLevelComplete() {
+    if (!this._enabled) return;
     this.initCtx();
-    const now = this.ctx!.currentTime;
     const freqs = [523.25, 659.25, 783.99, 1046.50]; // C Major
-    freqs.forEach((f, i) => {
+    freqs.forEach((f) => {
       this.createOscillator(f, 'sine', 1, 0.05);
     });
+  }
+
+  // Text-to-Speech for word pronunciation
+  speak(text: string, lang: 'en-US' | 'ru-RU' = 'en-US') {
+    if (!this._enabled) return;
+    if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang;
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      utterance.volume = 0.8;
+
+      window.speechSynthesis.speak(utterance);
+    }
   }
 }
 
