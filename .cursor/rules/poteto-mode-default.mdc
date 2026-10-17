@@ -1,0 +1,6 @@
+---
+description: Default to poteto-mode for any non-trivial task in this repo
+alwaysApply: true
+---
+
+For any non-trivial task in this repo, read `.cursor/skills/poteto-mode/SKILL.md` and follow it as if `/poteto-mode` was invoked; skip only for one-line answers.
